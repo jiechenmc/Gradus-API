@@ -4,7 +4,7 @@ from pymongo import MongoClient
 from dotenv import load_dotenv
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
-from app.core.model import Record
+from app.core.model import Record, Term
 from app.core.query import QUERY, TERM, FIELD
 from app.core.utility import find
 
@@ -16,7 +16,7 @@ description = """
 Gradus 🚀
 ## Introduction
 You will be able to:
-* **Obtain grade distribution data for classes offered in Spring and Winter 2022** 
+* **Obtain grade distribution data for classes** 
 * **Data for all semesters will be available soon!** 
 """
 
@@ -40,8 +40,13 @@ async def root():
     return RedirectResponse("/docs")
 
 
-@app.get("/api/all/", response_model=list[Record], tags=["Grade Data"])
-async def get_all(query: str = QUERY, field: str = FIELD):
+@app.get("/api/meta/", response_model=Term)
+async def get_supported_terms():
+    return JSONResponse(db.list_collection_names())
+
+
+@app.get("/api/all/", response_model=list[Record])
+async def get_all_data(query: str = QUERY, field: str = FIELD):
     master = []
 
     for collection in db.list_collection_names():
@@ -50,7 +55,8 @@ async def get_all(query: str = QUERY, field: str = FIELD):
     return JSONResponse(master)
 
 
-@app.get("/api/term/", response_model=list[Record], tags=["Grade Data"])
-async def get_all(query: str = QUERY, field: str = FIELD, term: str = TERM):
-    print(term)
+@app.get("/api/term/", response_model=list[Record])
+async def get_data_by_term(query: str = QUERY,
+                           field: str = FIELD,
+                           term: str = TERM):
     return JSONResponse(find(db.get_collection(term), field, query))

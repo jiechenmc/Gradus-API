@@ -24,3 +24,12 @@ class Record(BaseModel):
                 },
             }
         }
+
+
+class Term(BaseModel):
+
+    class Config:
+        schema_extra = {
+            "example":
+            {"Spring 2022", "Summer 2022", "Winter 2022", "Fall 2021"}
+        }
