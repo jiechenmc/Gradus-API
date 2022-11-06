@@ -2,4 +2,4 @@
 
 API for [Gradus](https://github.com/jiechenmc/Gradus)
 <br />
-Hosted on Heroku
+Deployed on Heroku with Docker
