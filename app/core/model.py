@@ -11,11 +11,11 @@ class Record(BaseModel):
     class Config:
         schema_extra = {
             "example": {
-                "Section": "CSE214-R01",
-                "Term": "Spring 2022",
-                "Course Title": "DATA STRUCTURES",
-                "Instructors": "Ahmad Esmaili",
-                "Grades": {
+                "section": "CSE214-R01",
+                "term": "Spring 2022",
+                "courseTitle": "DATA STRUCTURES",
+                "instructor": "Ahmad Esmaili",
+                "grades": {
                     "A": 8,
                     "A-": 1,
                     "B+": 2,
