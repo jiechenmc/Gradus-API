@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.core.model import Record, Term
 from app.core.query import QUERY, TERM, FIELD
 from app.core.utility import find
+from typing import List
 
 load_dotenv()
 client = MongoClient(os.getenv("mongo_url"))
@@ -47,12 +48,36 @@ async def get_supported_terms():
 
 @app.get("/api/all/", response_model=list[Record])
 async def get_all_data(query: str = QUERY, field: str = FIELD):
-    master = []
+    result = []
 
     for collection in db.list_collection_names():
-        master.extend(find(db.get_collection(collection), field, query))
+        result.extend(find(db.get_collection(collection), field, query))
 
-    return JSONResponse(master)
+    return JSONResponse(result)
+
+
+@app.get("/api/class", response_model=list[Record])
+async def get_class_by_instructor(query: str = QUERY, instructor: str = None):
+    all_classes_by_ins = []
+
+    for collection in db.list_collection_names():
+        all_classes_by_ins.extend(
+            find(db.get_collection(collection), "instructor", instructor))
+
+    class_by_ins = [x for x in all_classes_by_ins if query in x["section"]]
+
+    return JSONResponse(class_by_ins)
+
+
+@app.get("/api/instructor/class", response_model=list[Record])
+async def get_all_class_by_instructor(instructor: str = QUERY):
+    all_classes_by_ins = []
+
+    for collection in db.list_collection_names():
+        all_classes_by_ins.extend(
+            find(db.get_collection(collection), "instructor", instructor))
+
+    return JSONResponse(all_classes_by_ins)
 
 
 @app.get("/api/term/", response_model=list[Record])
